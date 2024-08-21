@@ -1,1 +1,1 @@
-module gin-vue-blog
+module gvb_server
