@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/sirupsen/logrus"
 	"gvb_server/core"
 	"gvb_server/global"
+	"gvb_server/routers"
 )
 
 func main() {
@@ -12,15 +12,15 @@ func main() {
 
 	// 初始化日志
 	global.Log = core.InitLogger()
-	global.Log.Warnln("嘻嘻嘻")
-	global.Log.Errorln("嘻嘻嘻")
-	global.Log.Infoln("嘻嘻嘻")
-
-	logrus.Warnln("嘻嘻嘻")
-	logrus.Errorln("嘻嘻嘻")
-	logrus.Infoln("嘻嘻嘻")
 
 	// 连接数据库
 	global.DB = core.InitGorm()
+
+	// 初始化路由
+	router := routers.InitRouter()
+
+	addr := global.Config.System.Addr()
+	global.Log.Infof("gvb_server运行在：%s", addr)
+	router.Run(addr)
 
 }

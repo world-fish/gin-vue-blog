@@ -6,20 +6,19 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gvb_server/global"
-	"log"
 	"time"
 )
 
 func InitGorm() *gorm.DB {
 	// 检查全局配置中的数据库主机是否为空
 	if global.Config.Mysql.Host == "" {
-		log.Printf("未配置数据库信息")
+		global.Log.Printf("未配置数据库信息")
 		return nil
 	}
 
 	// 生成数据库的 DSN (Data Source Name) 字符串，用于连接数据库
 	dsn := global.Config.Mysql.Dsn()
-	log.Printf("查看数据库连接地址：%s", dsn)
+	global.Log.Printf("查看数据库连接地址：%s", dsn)
 
 	// 定义一个变量 mysqlLogger，用于存储 Gorm 的日志接口
 	var mysqlLogger logger.Interface
@@ -31,6 +30,7 @@ func InitGorm() *gorm.DB {
 		// 否则，在生产环境 ("release") 中，只记录错误信息
 		mysqlLogger = logger.Default.LogMode(logger.Error)
 	}
+	//global.MysqlLog = logger.Default.LogMode(logger.Info)
 
 	// 使用 Gorm 的 Open 方法连接数据库，传入 DSN 和配置参数
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
@@ -38,7 +38,7 @@ func InitGorm() *gorm.DB {
 		Logger: mysqlLogger,
 	})
 	if err != nil {
-		log.Fatal(fmt.Sprintf("数据库连接失败: %s", err))
+		global.Log.Fatal(fmt.Sprintf("数据库连接失败: %s", err))
 	}
 
 	// 获取通用数据库对象 sql.DB，以便进行更细粒度的控制
